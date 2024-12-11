@@ -28,12 +28,11 @@ bits_2fsk = randi([0, 1], 1, num_bits); % For 2FSK
 bits_4fsk = randi([0, 3], 1, num_bits); % For 4FSK
 
 % Modulate the signals
-M = 4;
 freqsep = 2;
-Fs = 8;
+Fs = 12;
 nsamp = 4;
-fsk2_sig = fskmod(bits_2fsk, M, freqsep, nsamp, Fs); % 2FSK modulation
-fsk4_sig = fskmod(bits_4fsk, M, freqsep, nsamp, Fs); % 4FSK modulation
+fsk2_sig = fskmod(bits_2fsk, 2, freqsep, nsamp, Fs); % 2FSK modulation
+fsk4_sig = fskmod(bits_4fsk, 4, freqsep, nsamp, Fs); % 4FSK modulation
 for i = 1:length(SNR_dB)
     % Calculate noise standard deviation for AWGN
     SNR_linear = 10^(SNR_dB(i) / 10);
@@ -71,12 +70,12 @@ for i = 1:length(SNR_dB)
 
     % 2FSK through AWGN
     rx_fsk2_awgn = fsk2_sig + noise_awgn_2fsk; % Add AWGN to 2FSK signal
-    demod_bits_2fsk_awgn = fskdemod(rx_fsk2_awgn, M, freqsep, nsamp, Fs); % Demodulate 2FSK signal
+    demod_bits_2fsk_awgn = fskdemod(rx_fsk2_awgn, 2, freqsep, nsamp, Fs); % Demodulate 2FSK signal
     BER_2FSK_AWGN(i) = sum(bits_2fsk ~= demod_bits_2fsk_awgn) / num_bits; % Calculate BER for 2FSK
     
     % 4FSK through AWGN
     rx_fsk4_awgn = fsk4_sig + noise_awgn_4fsk; % Add AWGN to 4FSK signal
-    demod_bits_4fsk_awgn = fskdemod(rx_fsk4_awgn, M, freqsep, nsamp, Fs); % Demodulate 4FSK signal
+    demod_bits_4fsk_awgn = fskdemod(rx_fsk4_awgn, 4, freqsep, nsamp, Fs); % Demodulate 4FSK signal
     BER_4FSK_AWGN(i) = sum(bits_4fsk ~= demod_bits_4fsk_awgn) / num_bits; % Calculate BER for 4FSK
 
     % Rayleigh Fading Channel
@@ -102,12 +101,12 @@ for i = 1:length(SNR_dB)
 
     % 2FSK through Rayleigh
     rx_fsk2_rayleigh = rayleigh_fading_2fsk .* fsk2_sig + noise_awgn_2fsk;
-    demod_bits_2fsk_rayleigh = fskdemod(rx_fsk2_rayleigh ./ rayleigh_fading_2fsk, M, freqsep, nsamp, Fs);
+    demod_bits_2fsk_rayleigh = fskdemod(rx_fsk2_rayleigh ./ rayleigh_fading_2fsk, 2, freqsep, nsamp, Fs);
     BER_2FSK_Rayleigh(i) = sum(bits_2fsk ~= demod_bits_2fsk_rayleigh) / num_bits;
 
     % 4FSK through Rayleigh
     rx_fsk4_rayleigh = rayleigh_fading_4fsk .* fsk4_sig + noise_awgn_4fsk;
-    demod_bits_4fsk_rayleigh = fskdemod(rx_fsk4_rayleigh ./ rayleigh_fading_4fsk, M, freqsep, nsamp, Fs);
+    demod_bits_4fsk_rayleigh = fskdemod(rx_fsk4_rayleigh ./ rayleigh_fading_4fsk, 4, freqsep, nsamp, Fs);
     BER_4FSK_Rayleigh(i) = sum(bits_4fsk ~= demod_bits_4fsk_rayleigh) / num_bits;
 
 
